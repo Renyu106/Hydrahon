@@ -1,17 +1,17 @@
-# SQL insert 
+# SQL 삽입
 
-> Note: The displayed SQL query in the examples has no prepared statements. In other words the "?" placeholders have been replaced with the actual parameter.
+> 참고: 예시에 표시된 SQL 쿼리에는 준비된 문장이 없습니다. 즉, "?" 플레이스홀더가 실제 매개변수로 대체되었습니다
 
-## Inserting data
+## 데이터 삽입하기
 
 ```php
 // SQL: insert into `people` (`firstname`, `lastname`) values ('Ethan', 'Klein')
 $h->table('people')->insert(['firstname' => 'Ethan', 'lastname' => 'Klein'])->execute();
 ```
 
-## Bulk inserting data
+## 대량 데이터 삽입하기
 
-When you want to insert multiple rows at once simply pass in a multidimensional array.
+한 번에 여러 행을 삽입하려면 다차원 배열을 전달하면 됩니다
 
 ```php
 // SQL: insert into `people` (`firstname`, `lastname`) values ('Ethan', 'Klein'), ('Hila,' 'Klein')
@@ -21,11 +21,11 @@ $h->table('people')->insert([
 ])->execute();
 ```
 
-## Values
+## 값
 
-The first argument of the `insert` method simply forwards the given data to the `values` method.
+`INSERT` 메소드의 첫 번째 인자는 주어진 데이터를 `values` 메소드로 전달합니다
 
-The `values` method will always append the given data so you write stuff like this which will generate the exact same query as above.
+`values` 메소드는 항상 주어진 데이터를 추가하므로 아래와 같이 작성할 수 있으며, 이는 위의 쿼리와 정확히 같은 쿼리를 생성합니다
 
 ```php
 // SQL: insert into `people` (`firstname`, `lastname`) values ('Ethan', 'Klein'), ('Hila,' 'Klein')
@@ -37,12 +37,9 @@ $insert->values(['firstname' => 'Hila', 'lastname' => 'Klein']);
 $insert->execute();
 ```
 
-[~ PHPDoc](/src/Query/Sql/Insert.php#values)
+## 무시하기
 
-## Ignore
-
-You can toggle insert ignore.
-
+삽입을 무시하도록 설정할 수 있습니다
 ```php
 // SQL: insert ignore into `people` (`firstname`, `lastname`) values (Ethan, Klein)
 $h->table('people')
@@ -52,12 +49,9 @@ $h->table('people')
     ->execute();
 ```
 
-[~ PHPDoc](/src/Query/Sql/Insert.php#ignore)
+## 값 재설정
 
-## Reset values
-
-Because values are always appended you need to be able to reset them at some point. For that, we have the `resetValues` method.
-
+값은 항상 추가되므로 어느 시점에서 값을 재설정할 수 있어야 합니다. 그러기 위해 `resetValues` 메소드가 있습니다
 ```php
 // SQL: insert into `people` (`firstname`, `lastname`) values (Hila, Klein)
 $insert = $h->table('people')->insert();
@@ -68,5 +62,3 @@ $insert->values(['firstname' => 'Hila', 'lastname' => 'Klein']);
 
 $insert->execute();
 ```
-
-[~ PHPDoc](/src/Query/Sql/Insert.php#resetValues)
