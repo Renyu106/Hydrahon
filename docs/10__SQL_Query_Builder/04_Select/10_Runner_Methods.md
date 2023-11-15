@@ -1,26 +1,28 @@
-# SQL Select Runner Methods
+# SQL Select 실행 메소드
 
-One important thing to know here is that there are multiple so-called "runner methods". Think of them as helpers for common queries. These methods can modify your query, execute it and can do special operations with the returned result.
+여기서 알아야 할 중요한 것은 여러 가지 이른바 "실행 메소드"가 있다는 것입니다
 
-> Note: The displayed SQL query in the examples has no prepared statements. In other words the "?" have been replaced with the actual parameter.
+이들을 흔한 쿼리에 대한 도우미로 생각하시면 편합니다, 이 메소드들은 쿼리를 수정하고 실행하며, 반환된 결과에 대해 특별한 연산을 수행할 수 있습니다
 
-## Fetching 
+> 참고: 예시에 표시된 SQL 쿼리에는 준비된 문장이 없습니다. 즉, "?" 플레이스홀더가 실제 매개변수로 대체되었습니다
 
-### Execute 
+## 데이터 가져오기
 
-The absolute base runner method is `execute`. It's what all other runner methods are based on. 
+### 실행
 
-It's an alias of `executeResultFetcher`, this means the method just forwards the plain data that you return inside your `ClanCats\Hydrahon\Builder` instance callback.
+가장 기본적인 실행 메소드는 `execute`입니다. 다른 모든 실행 메소드의 기반이 됩니다.
+
+`executeResultFetcher`의 별칭이며, 이는 메소드가 `ClanCats\Hydrahon\Builder` 인스턴스 콜백 안에서 반환하는 일반 데이터를 그대로 전달한다는 것을 의미합니다
 
 ```php
 $h->table('people')->select()->execute();
 ```
 
-### Get 
+### 가져오기
 
-The default runner method is the `get` method, it handles most of the built-in result modifications.
+기본 실행 메소드는 `get` 메소드이며, 내장된 결과 수정의 대부분을 처리합니다
 
-As an example the handling of an expected single result vs. collections.
+예를 들어 단일 결과와 컬렉션에 대한 처리를 예로 들 수 있습니다
 
 ```php
 $people = $h->table('people');
@@ -29,9 +31,9 @@ $people->select()->where('name', 'Trevor')->execute(); // [[id: 1, name: 'Trevor
 $people->select()->where('name', 'Trevor')->limit(1)->execute(); // [[id: 1, name: 'Trevor']]
 ```
 
-Will return a collection or in other words an array of arrays. 
+이는 컬렉션, 다시 말해 배열의 배열을 반환합니다
 
-Using the `get` method Hydrahon knows that you are expecting a single result by setting the limit to 1.
+`get` 메소드를 사용하면 Hydrahon이 당신이 단일 결과를 기대하고 있다는 것을 알고 limit를 1로 설정합니다
 
 ```php
 $people->select()->where('name', 'Trevor')->get(); // [[id: 1, name: 'Trevor']]
@@ -40,9 +42,9 @@ $people->select()->where('name', 'Trevor')->limit(1)->get(); // [id: 1, name: 'T
 
 [~ PHPDoc](/src/Query/Sql/Select.php#get) 
 
-### One
+### 한개만 가져오기
 
-The method one hopefully speaks like a lot of methods for itself. It will add `limit 1` to your query and return a single result.
+`one` 메소드는 자명한 메소드로, 쿼리에 `limit 1`을 추가하고 단일 결과를 반환합니다
 
 ```php
 $jeffry = $people->select()->where('name', 'jeffry')->one(); // [id: 2, name: 'jeffry']
@@ -50,16 +52,16 @@ $jeffry = $people->select()->where('name', 'jeffry')->one(); // [id: 2, name: 'j
 
 [~ PHPDoc](/src/Query/Sql/Select.php#one) 
 
-### First & Last
+### 첫 번째와 마지막 데이터 가져오기
 
-Selects the first/last result ordered by the given key (default is `id`).
+주어진 키(기본값은 `id`)로 정렬된 첫 번째/마지막 결과를 선택합니다
 
 ```php
 $firstPerson = $people->select()->first(); 
 $lastPerson = $people->select()->last();
 ```
 
-You can set on what key the first / last item should be selected:
+첫 번째 / 마지막 항목을 선택할 키를 설정할 수 있습니다:
 
 ```php
 $youngest = $people->select()->first('age');
@@ -68,16 +70,16 @@ $oldest = $people->select()->last('age');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#first)
 
-### Find 
+### 찾기
 
-Selects one item with the given value. This translates to a simple `where` with `limit` 1.
+주어진 값으로 하나의 항목을 선택합니다. 이는 `limit` 1과 함께 간단한 `where`로 번역됩니다
 
 ```php
 // SQL: select * from `questions` where `id` = 42 limit 0, 1
 $theAnswer = $h->table('questions')->select()->find(42);
 ```
 
-You can also set the key.
+키도 설정할 수 있습니다
 
 ```php
 // SQL: select * from `people` where `name` = John limit 0, 1
@@ -86,29 +88,29 @@ $john = $people->select()->find('John', 'name');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#find)
 
-### Column 
+### 칼럼
 
-Select one specific value. 
+특정한 값을 선택합니다
 
 ```php
 // SQL: select `age` from `people` where `name` = Ray limit 0, 1
-$age = $people->select()->where('name', 'Ray')->column('age'); // returns 26
+$age = $people->select()->where('name', 'Ray')->column('age'); // 26을 반환
 ```
 
 [~ PHPDoc](/src/Query/Sql/Select.php#column)
 
-## Aggregators
+## 집계 함수
 
-### Count 
+### 개수
 
-Selects using the MySQL `count` function and returns the number of results.
+MySQL `count` 함수를 사용하여 결과의 개수를 반환합니다
 
 ```php
 // SQL: select count(*) from `people` limit 0, 1
 $peopleCount = $people->select()->count();
 ```
 
-By default the wildcard `*` is used but you can pass a field name:
+기본적으로 와일드카드 `*`가 사용되지만 필드 이름을 전달할 수 있습니다
 
 ```php
 // SQL: select count(`deleted_at`) from `people` limit 0, 1
@@ -117,9 +119,9 @@ $deletedCount = $people->select()->count('deleted_at');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#count)
 
-### Sum 
+### 합계
 
-Selects using the MySQL `sum` function and returns the result.
+MySQL `sum` 함수를 사용하여 결과를 반환합니다
 
 ```php
 // SQL: select sum(`number_of_visits`) from `people` limit 0, 1
@@ -128,9 +130,9 @@ $totalVisits = $people->select()->sum('number_of_visits');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#sum)
 
-### Min 
+### 최소값
 
-Selects using the MySQL `min` function and returns the result.
+MySQL `min` 함수를 사용하여 결과를 반환합니다
 
 ```php
 // SQL: select min(`score`) from `game`.`ranking` limit 0, 1
@@ -139,9 +141,9 @@ $lowestScore = $h->table('game.ranking')->select()->min('score');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#min)
 
-### Max 
+### 최대값
 
-Selects using the MySQL `max` function and returns the result.
+MySQL `max` 함수를 사용하여 결과를 반환합니다
 
 ```php
 // SQL: select max(`score`) from `game`.`ranking` limit 0, 1
@@ -150,9 +152,9 @@ $highestScore = $h->table('game.ranking')->select()->max('score');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#max)
 
-### Average 
+### 평균
 
-Selects using the MySQL `avg` function and returns the result.
+MySQL `avg` 함수를 사용하여 결과를 반환합니다
 
 ```php
 // SQL: select avg(`age`) from `people` limit 0, 1
@@ -161,15 +163,13 @@ $averageAge = $people->select()->avg('age');
 
 [~ PHPDoc](/src/Query/Sql/Select.php#avg)
 
-### Exists 
+### 존재 여부
 
-Returns a bool value if anything under the queries conditions exists.
+쿼리의 조건에 따라 어떤 것이 존재하는지 여부를 bool 값으로 반환합니다
 
 ```php
-// SQL: select exists(select * from `people` where `age` > 89) as `exists
+// SQL: select exists(select * from `people` where `age` > 89) as `exists`
 $hasOldPeople = $people->select()->where('age', '>', '89')->exists();
 ```
 
 [~ PHPDoc](/src/Query/Sql/Select.php#exists)
-
-
