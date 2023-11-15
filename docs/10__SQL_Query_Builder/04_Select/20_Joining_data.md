@@ -1,10 +1,12 @@
-# SQL Select Joins
+# SQL Select 조인
 
-Do you like to join things? We too!
+조인하는 것을 좋아하시나요? 저희도 그렇습니다 !
 
-## Basic Join
+## 기본 조인
 
-Let's assume we have two tables, a users table and a comments table. Every comment has a column containing a user id. Now we want to fetch all comment bodies including the name of their creators.
+두 개의 테이블, 사용자 테이블과 댓글 테이블이 있다고 가정해 봅시다
+
+모든 댓글에는 사용자 ID를 포함하는 열이 있으며, 생성자 이름을 포함한 모든 댓글 내용을 가져오고 싶습니다
 
 ```php
 // SQL: 
@@ -17,26 +19,12 @@ $h->table('comments as c')
     ->get();
 ```
 
-the default method `join` will generate a **left** join.
-
-[~ PHPDoc](/src/Query/Sql/Select.php#join)
-
-### Right Join
-
-[~ PHPDoc](/src/Query/Sql/Select.php#rightJoin)
-
-### Inner Join
-
-[~ PHPDoc](/src/Query/Sql/Select.php#innerJoin)
-
-### Outer Join
-
-[~ PHPDoc](/src/Query/Sql/Select.php#outerJoin)
+기본 메소드 `join`은 **왼쪽** 조인을 생성합니다.
 
 
-## Complex Join
+## 복잡한 조인
 
-Sometimes you need to join data on more than one condition. Therefor you can pass a callback to the all `join` methods allowing you to specify more conditions.
+때때로 여러 조건에 따라 데이터를 조인해야 할 필요가 있습니다 이를 위해 모든 `join` 메소드에 콜백을 전달할 수 있어 더 많은 조건을 지정할 수 있습니다
 
 ```php
 // SQL:
